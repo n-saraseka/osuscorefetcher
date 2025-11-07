@@ -38,17 +38,10 @@ namespace osuscorefetcher.ScoreCalc
         }
         public ScoreInfo GetScoreInfo(ApiClasses.Score score, Ruleset ruleset)
         {
-            Dictionary<HitResult, int> ScoreStatistics = new Dictionary<HitResult, int>();
-
-            foreach (var property in typeof(Statistics).GetProperties())
-            {
-                var hitResultAttribute = property.GetCustomAttribute<HitResultAttribute>();
-                if (hitResultAttribute != null)
-                {
-                    int value = (int?)property.GetValue(score.Statistics) ?? 0;
-                    ScoreStatistics[hitResultAttribute.HitResult] = value;
-                }
-            }
+            // i thought the problem was that i was missing maximumstatistics before.
+            // the values still don't match even after fixing that blunder...
+            Dictionary<HitResult, int> ScoreStatistics = ScoreStatisticsToDict(score.Statistics);
+            Dictionary<HitResult, int> MaximumStatistics = ScoreStatisticsToDict(score.MaximumStatistics);
 
             SoloScoreInfo soloScoreInfo = new SoloScoreInfo
             {
@@ -61,7 +54,8 @@ namespace osuscorefetcher.ScoreCalc
                 Rank = (ScoreRank)score.Grade,
                 EndedAt = score.Date,
                 Mods = score.Mods,
-                Statistics = ScoreStatistics
+                Statistics = ScoreStatistics,
+                MaximumStatistics = MaximumStatistics
             };
 
             List<Mod> Mods = new List<Mod>();
@@ -100,6 +94,24 @@ namespace osuscorefetcher.ScoreCalc
                         return new ManiaRuleset();
                     }
             }
+        }
+        public Dictionary<HitResult, int> ScoreStatisticsToDict(Statistics stats)
+        {
+            Dictionary<HitResult, int> ScoreStatistics = new Dictionary<HitResult, int>();
+
+            foreach (var property in typeof(Statistics).GetProperties())
+            {
+                var hitResultAttribute = property.GetCustomAttribute<HitResultAttribute>();
+                if (hitResultAttribute != null)
+                {
+                    int? value = (int?)property.GetValue(stats);
+                    if (value != null)
+                    {
+                        ScoreStatistics[hitResultAttribute.HitResult] = (int)value;
+                    }
+                }
+            }
+            return ScoreStatistics;
         }
     }
 }

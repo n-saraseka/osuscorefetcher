@@ -30,6 +30,8 @@ namespace osuscorefetcher.ApiClasses
         public int Combo { get; set; }
         [JsonProperty("statistics")]
         public Statistics Statistics { get; set; } = null!;
+        [JsonProperty("maximum_statistics")]
+        public Statistics MaximumStatistics { get; set; } = null!;
         [JsonProperty("total_score")]
         public uint TotalScore { get; set; }
         [JsonProperty("pp")]
