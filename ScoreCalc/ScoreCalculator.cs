@@ -25,11 +25,9 @@ namespace osuscorefetcher.ScoreCalc
         {
             // preparing necessary data
             Ruleset ruleset = GetRulesetFromScore(score);
-            ScoreInfo scoreInfo = GetScoreInfo(score, ruleset);
             IBeatmap beatmap = await GetScoreBeatmap(score);
+            ScoreInfo scoreInfo = GetScoreInfo(score, beatmap, ruleset);
             FlatWorkingBeatmap flatWorkingBeatmap = new FlatWorkingBeatmap(beatmap);
-            // because PerformanceCalculator takes the difficulty settings from ScoreInfo
-            scoreInfo.BeatmapInfo = flatWorkingBeatmap.BeatmapInfo; 
 
             // diffcalc
             DifficultyAttributes difficultyAttributes = ruleset.CreateDifficultyCalculator(flatWorkingBeatmap).Calculate(scoreInfo.Mods);
@@ -39,7 +37,7 @@ namespace osuscorefetcher.ScoreCalc
 
             return (double)score.PP;
         }
-        public ScoreInfo GetScoreInfo(ApiClasses.Score score, Ruleset ruleset)
+        public ScoreInfo GetScoreInfo(ApiClasses.Score score, IBeatmap beatmap, Ruleset ruleset)
         {
             Dictionary<HitResult, int> ScoreStatistics = ScoreStatisticsToDict(score.Statistics);
             Dictionary<HitResult, int> MaximumStatistics = ScoreStatisticsToDict(score.MaximumStatistics);
@@ -69,7 +67,7 @@ namespace osuscorefetcher.ScoreCalc
             }
             Mod[] ModsArray = Mods.ToArray();
 
-            return soloScoreInfo.ToScoreInfo(ModsArray);
+            return soloScoreInfo.ToScoreInfo(ModsArray, beatmap.BeatmapInfo);
         }
         public async Task<Beatmap> GetScoreBeatmap(ApiClasses.Score score) {
             using Stream stream = await httpClient.GetStreamAsync($"https://osu.ppy.sh/osu/{score.BeatmapId}");
