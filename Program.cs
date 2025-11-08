@@ -13,14 +13,13 @@ namespace osuscorefetcher
             await ApiService.SetToken(config.ApiId, config.ApiSecret);
             Console.WriteLine("Got token!");
             ScoresResponse latestScores = await ApiService.GetScores();
-            for (int i = 0; i<latestScores.Scores.Length; i++)
+            for (int i = 0; i < latestScores.Scores.Length; i++)
             {
                 ScoreCalculator scoreCalc = new ScoreCalculator();
                 if (latestScores.Scores[i].PP == null)
                 {
-                    Console.WriteLine($"Score with ID {latestScores.Scores[i].Id} doesn't have a PP value attached to it. Calculating...");
                     double pp = await scoreCalc.CalculateScorePP(latestScores.Scores[i]);
-                    Console.WriteLine($"Score with ID {latestScores.Scores[i].Id} has a PP value of {pp}.");
+                    Console.WriteLine($"Score with ID {latestScores.Scores[i].Id} (Mode: {latestScores.Scores[i].Mode}) has a PP value of {pp}.");
                 }
             }
         }
