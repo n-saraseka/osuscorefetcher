@@ -28,6 +28,8 @@ namespace osuscorefetcher.ScoreCalc
             ScoreInfo scoreInfo = GetScoreInfo(score, ruleset);
             IBeatmap beatmap = await GetScoreBeatmap(score);
             FlatWorkingBeatmap flatWorkingBeatmap = new FlatWorkingBeatmap(beatmap);
+            // because PerformanceCalculator takes the difficulty settings from ScoreInfo
+            scoreInfo.BeatmapInfo = flatWorkingBeatmap.BeatmapInfo; 
 
             // diffcalc
             DifficultyAttributes difficultyAttributes = ruleset.CreateDifficultyCalculator(flatWorkingBeatmap).Calculate(scoreInfo.Mods);
@@ -39,8 +41,6 @@ namespace osuscorefetcher.ScoreCalc
         }
         public ScoreInfo GetScoreInfo(ApiClasses.Score score, Ruleset ruleset)
         {
-            // i thought the problem was that i was missing maximumstatistics before.
-            // the values still don't match even after fixing that blunder...
             Dictionary<HitResult, int> ScoreStatistics = ScoreStatisticsToDict(score.Statistics);
             Dictionary<HitResult, int> MaximumStatistics = ScoreStatisticsToDict(score.MaximumStatistics);
 
