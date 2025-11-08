@@ -8,7 +8,9 @@ namespace osuscorefetcher.ApiClasses
     internal class Score
     {
         [JsonProperty("id")]
-        public long Id { get; set; }
+        public ulong? Id { get; set; }
+        [JsonProperty("legacy_score_id")]
+        public ulong? LegacyScoreId { get; set; }
         [JsonProperty("ended_at")]
         public DateTime Date {  get; set; }
         [JsonProperty("ruleset_id")]
@@ -33,7 +35,9 @@ namespace osuscorefetcher.ApiClasses
         [JsonProperty("maximum_statistics")]
         public Statistics MaximumStatistics { get; set; } = null!;
         [JsonProperty("total_score")]
-        public uint TotalScore { get; set; }
+        public int TotalScore { get; set; }
+        [JsonProperty("legacy_total_score")]
+        public int LegacyTotalScore { get; set; }
         [JsonProperty("pp")]
         public double? PP { get; set; }
     }

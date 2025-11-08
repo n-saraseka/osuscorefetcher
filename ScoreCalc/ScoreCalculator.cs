@@ -18,8 +18,9 @@ using System.Reflection;
 
 namespace osuscorefetcher.ScoreCalc
 {
-    internal class ScoreCalculator(HttpClient httpClient)
+    internal class ScoreCalculator
     {
+        private static readonly HttpClient httpClient = new HttpClient();
         public async Task<double> CalculateScorePP(ApiClasses.Score score)
         {
             // preparing necessary data
@@ -29,7 +30,7 @@ namespace osuscorefetcher.ScoreCalc
             FlatWorkingBeatmap flatWorkingBeatmap = new FlatWorkingBeatmap(beatmap);
 
             // diffcalc
-            DifficultyAttributes difficultyAttributes = ruleset.CreateDifficultyCalculator(flatWorkingBeatmap).Calculate();
+            DifficultyAttributes difficultyAttributes = ruleset.CreateDifficultyCalculator(flatWorkingBeatmap).Calculate(scoreInfo.Mods);
             PerformanceCalculator performanceCalculator = ruleset.CreatePerformanceCalculator();
             PerformanceAttributes performanceAttributes = await performanceCalculator.CalculateAsync(scoreInfo, difficultyAttributes, default);
             score.PP = performanceAttributes.Total;
@@ -48,6 +49,8 @@ namespace osuscorefetcher.ScoreCalc
                 BeatmapID = score.BeatmapId,
                 RulesetID = (int)score.Mode,
                 TotalScore = score.TotalScore,
+                LegacyTotalScore = score.LegacyTotalScore,
+                LegacyScoreId = score.LegacyScoreId,
                 Accuracy = score.Accuracy,
                 UserID = score.UserId,
                 MaxCombo = score.Combo,
