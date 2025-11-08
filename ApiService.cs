@@ -5,11 +5,12 @@ using osuscorefetcher.ConfigHandler;
 
 namespace osuscorefetcher
 {
-    internal class ApiService()
+    internal class ApiService
     {
         private static Config Config { get; set; }
         public const string TokenUrl = "https://osu.ppy.sh/oauth/token";
         public const string ApiUrl = "https://osu.ppy.sh/api/v2";
+        private static readonly HttpClient httpClient = new HttpClient();
         public static async Task SetToken(int apiId, string apiSecret)
         {
 
@@ -20,9 +21,6 @@ namespace osuscorefetcher
 
             if (Config.AccessToken == null || seconds > Config?.ExpiresIn)
             {
-                // need to get a new token
-                HttpClient client = new HttpClient();
-
                 // assemble params
                 Dictionary<string, string> data = new Dictionary<string, string>();
                 data.Add("client_id", apiId.ToString());
@@ -36,11 +34,9 @@ namespace osuscorefetcher
                 requestMessage.Content = new StringContent(dataJSON, Encoding.UTF8, "application/json");
 
                 // getting the token
-                HttpResponseMessage response = await client.SendAsync(requestMessage);
+                HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
                 response.EnsureSuccessStatusCode();
                 string content = await response.Content.ReadAsStringAsync();
-
-                client.Dispose();
 
                 // writing new token data
                 TokenInfo tokenData = JsonConvert.DeserializeObject<TokenInfo>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
@@ -53,7 +49,6 @@ namespace osuscorefetcher
         }
         public static async Task<ScoresResponse> GetScores(string cursor = "null", string ruleset = "null", int apiVersion = 20220705)
         {
-            HttpClient client = new HttpClient();
 
             Dictionary<string, string> queryParameters = new Dictionary<string, string>
             {
@@ -70,11 +65,9 @@ namespace osuscorefetcher
             requestMessage.Headers.Add("x-api-version", apiVersion.ToString());
 
             // getting scores
-            HttpResponseMessage response = await client.SendAsync(requestMessage);
+            HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
-
-            client.Dispose();
 
             ScoresResponse scores = JsonConvert.DeserializeObject<ScoresResponse>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 

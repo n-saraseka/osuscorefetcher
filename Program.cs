@@ -12,10 +12,10 @@ namespace osuscorefetcher
             Console.WriteLine("Testing...");
             ApiService.SetToken(config.ApiId, config.ApiSecret).Wait();
             Console.WriteLine("Got token!");
-            ScoresResponse latestScores = ApiService.GetScores("null", "osu").Result;
+            ScoresResponse latestScores = ApiService.GetScores().Result;
             for (int i = 0; i<latestScores.Scores.Length; i++)
             {
-                ScoreCalculator scoreCalc = new ScoreCalculator(new HttpClient());
+                ScoreCalculator scoreCalc = new ScoreCalculator();
                 if (latestScores.Scores[i].PP == null)
                 {
                     Console.WriteLine($"Score with ID {latestScores.Scores[i].Id} doesn't have a PP value attached to it. Calculating...");
