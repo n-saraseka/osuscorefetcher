@@ -6,7 +6,7 @@ namespace osuscorefetcher
 {
     internal class Program
     {
-        static async void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Config config = ConfigIO.GetConfig();
             Console.WriteLine("Testing...");
