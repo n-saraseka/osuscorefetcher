@@ -23,6 +23,8 @@ namespace osuscorefetcher.ScoreCalc
         private static readonly HttpClient httpClient = new HttpClient();
         public async Task<double?> CalculateScorePP(ApiClasses.Score score)
         {
+            // artificial delay cause ratelimits yeahh
+            await Task.Delay(500);
             // preparing necessary data
             Ruleset ruleset = GetRulesetFromScore(score);
             IBeatmap beatmap = new Beatmap();
