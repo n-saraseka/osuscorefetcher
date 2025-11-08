@@ -21,11 +21,21 @@ namespace osuscorefetcher.ScoreCalc
     internal class ScoreCalculator
     {
         private static readonly HttpClient httpClient = new HttpClient();
-        public async Task<double> CalculateScorePP(ApiClasses.Score score)
+        public async Task<double?> CalculateScorePP(ApiClasses.Score score)
         {
             // preparing necessary data
             Ruleset ruleset = GetRulesetFromScore(score);
-            IBeatmap beatmap = await GetScoreBeatmap(score);
+            IBeatmap beatmap = new Beatmap();
+            try
+            {
+                beatmap = await GetScoreBeatmap(score);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Couldn't get the beatmap for score {score.Id}. Beatmap ID: {score.BeatmapId}.");
+                Console.WriteLine($"Failed with the following exception: {ex.Message}");
+                return null;
+            }
             ScoreInfo scoreInfo = GetScoreInfo(score, beatmap, ruleset);
             FlatWorkingBeatmap flatWorkingBeatmap = new FlatWorkingBeatmap(beatmap);
 
@@ -35,7 +45,7 @@ namespace osuscorefetcher.ScoreCalc
             PerformanceAttributes performanceAttributes = await performanceCalculator.CalculateAsync(scoreInfo, difficultyAttributes, default);
             score.PP = performanceAttributes.Total;
 
-            return (double)score.PP;
+            return score.PP;
         }
         public ScoreInfo GetScoreInfo(ApiClasses.Score score, IBeatmap beatmap, Ruleset ruleset)
         {

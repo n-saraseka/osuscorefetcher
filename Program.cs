@@ -18,7 +18,7 @@ namespace osuscorefetcher
                 ScoreCalculator scoreCalc = new ScoreCalculator();
                 if (latestScores.Scores[i].PP == null)
                 {
-                    double pp = await scoreCalc.CalculateScorePP(latestScores.Scores[i]);
+                    double? pp = await scoreCalc.CalculateScorePP(latestScores.Scores[i]);
                     Console.WriteLine($"Score with ID {latestScores.Scores[i].Id} (Mode: {latestScores.Scores[i].Mode}) has a PP value of {pp}.");
                 }
             }
