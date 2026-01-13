@@ -17,7 +17,5 @@ namespace osuscorefetcher.ApiClasses
         public string Title { get; set; }
         [JsonProperty("preview_url")]
         public string PreviewUrl { get; set; }
-        [JsonProperty("covers")]
-        public Dictionary<string, string> Covers { get; set; }
     }
 }
