@@ -8,7 +8,7 @@ namespace osuscorefetcher.ApiClasses
     internal class Score
     {
         [JsonProperty("id")]
-        public ulong? Id { get; set; }
+        public ulong Id { get; set; }
         [JsonProperty("legacy_score_id")]
         public ulong? LegacyScoreId { get; set; }
         [JsonProperty("ended_at")]
@@ -19,8 +19,6 @@ namespace osuscorefetcher.ApiClasses
         public int BeatmapId { get; set; }
         [JsonProperty("user_id")]
         public int UserId { get; set; }
-        [JsonProperty("user")]
-        public User? User { get; set; }
         [JsonProperty("rank")]
         [JsonConverter(typeof(StringEnumConverter))]
         public Grade Grade { get; set; }

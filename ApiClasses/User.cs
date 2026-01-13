@@ -10,9 +10,7 @@ namespace osuscorefetcher.ApiClasses
         public string Username { get; set; }
         [JsonProperty("country")]
         public Country Country { get; set; }
-        [JsonProperty("rank")]
-        public Rank? Rank { get; set; }
-        [JsonProperty("avatar_url")]
-        public string AvatarUrl { get; set; }
+        [JsonProperty("statistics_rulesets")]
+        public Dictionary<string, UserRulesetStatistics> RulesetStatistics;
     }
 }

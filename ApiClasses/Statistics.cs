@@ -32,7 +32,7 @@ namespace osuscorefetcher.ApiClasses
         [JsonProperty("small_tick_hit")]
         [HitResult(HitResult.SmallTickHit)]
         public int? LegacySliderEnds { get; set; }
-        [JsonProperty("small_tick_mss")]
+        [JsonProperty("small_tick_miss")]
         [HitResult(HitResult.SmallTickMiss)]
         public int? LegacySliderEndMisses { get; set; }
         [JsonProperty("large_tick_hit")]
