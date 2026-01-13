@@ -141,20 +141,8 @@ namespace osuscorefetcher.DbService.Entities
             try
             {
                 Instance.Connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand();
-                command.CommandText = "INSERT INTO beatmap(id, beatmapset_id, gameplay_mode, difficulty_rating, bpm, ar, cs, accuracy, drain, status) VALUES (";
-
-                // because there are too many parameters...
-                List<NpgsqlParameter> parameters = new();
-                foreach (PropertyInfo property in beatmap.GetType().GetProperties())
-                {
-                    command.CommandText += $"@{property.Name}, ";
-                    parameters.Add(new NpgsqlParameter($"@{property.Name}", property.GetValue(beatmap)));
-                }
-                command.CommandText = command.CommandText.Substring(command.CommandText.Length - 2);
-                command.CommandText += ")";
-
-                for (int i = 0; i < parameters.Count; i++) command.Parameters.Add(parameters[i]);
+                string[] colNames = { "id", "beatmapset_id", "gameplay_mode", "difficulty_rating", "bpm", "ar", "cs", "accuracy", "drain", "status" };
+                NpgsqlCommand command = Utils.GenNonQueryCommand(true, "beatmap", colNames, beatmap);
 
                 insertedRows = command.ExecuteNonQuery();
                 if (insertedRows > 0) Console.WriteLine($"Inserted beatmap {beatmap.Id} into the DB");
