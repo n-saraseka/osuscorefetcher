@@ -2,7 +2,7 @@
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class Country
+    public class Country
     {
         [JsonProperty("code")]
         public string Code { get; set; }

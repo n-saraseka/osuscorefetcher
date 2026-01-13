@@ -5,7 +5,7 @@ using osu.Game.Online.API;
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class Score
+    public class Score
     {
         [JsonProperty("id")]
         public ulong Id { get; set; }

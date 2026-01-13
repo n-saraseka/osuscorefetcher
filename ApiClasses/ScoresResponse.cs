@@ -2,7 +2,7 @@
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class ScoresResponse
+    public class ScoresResponse
     {
         [JsonProperty("scores")]
         public Score[] Scores { get; set; }

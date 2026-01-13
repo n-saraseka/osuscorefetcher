@@ -2,7 +2,7 @@
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class TokenInfo
+    public class TokenInfo
     {
         [JsonProperty("access_token")]
         public string AccessToken { get; set; }

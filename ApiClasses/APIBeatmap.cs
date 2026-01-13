@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class APIBeatmap
+    public class APIBeatmap
     {
         [JsonProperty("id")]
         public int Id { get; set; }
