@@ -13,6 +13,11 @@ namespace osuscorefetcher.DbService.Entities
         private DbInstance Instance;
         public DbUserRulesetStatistics(DbInstance instance) { this.Instance = instance; }
 
+        /// <summary>
+        /// Get user's rank and PP statistics for every ruleset stored for that user in the DB
+        /// </summary>
+        /// <param name="user_id">User ID</param>
+        /// <returns>A Dictionary containing a populated UserRulesetStatistics object for respective found ruleset</returns>
         public Dictionary<string, UserRulesetStatistics>? GetAllUserStatistics(int user_id)
         {
             Dictionary<string, UserRulesetStatistics>? userStatisticsData = null;
@@ -58,7 +63,7 @@ namespace osuscorefetcher.DbService.Entities
         /// </summary>
         /// <param name="user_id">User ID</param>
         /// <param name="ruleset">Ruleset</param>
-        /// <returns>Populated UserRulesetStatistics object (or null in case user statistics data doesn't exist in the DB)</returns>
+        /// <returns>Populated UserRulesetStatistics object (or null in case data for this ruleset doesn't exist in the DB)</returns>
         public UserRulesetStatistics? GetUserStatisticsPerRuleset(int user_id, Mode ruleset)
         {
             UserRulesetStatistics? userStatisticsData = null;
