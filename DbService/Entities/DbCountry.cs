@@ -10,8 +10,6 @@ namespace osuscorefetcher.DbService.Entities
 {
     internal class DbCountry
     {
-        private DbInstance Instance;
-        public DbCountry(DbInstance instance) { this.Instance = instance; }
         /// <summary>
         /// Get Country from the DB
         /// </summary>
@@ -19,62 +17,36 @@ namespace osuscorefetcher.DbService.Entities
         /// <returns>Populated Country object (or null in case such country doesn't exist in the DB)</returns>
         public Country? GetCountry(string code)
         {
-            Country? country = null;
-            try
+            using (ScoreFetcherContext db = new ScoreFetcherContext())
             {
-                Instance.Connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand();
-                command.CommandText = "SELECT * FROM country WHERE code=@country_code";
-                NpgsqlParameter countryCodeParam = new NpgsqlParameter("@country_code", code);
-                command.Parameters.Add(countryCodeParam);
-                NpgsqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    country = new Country();
-                    country.Code = reader.GetString(0);
-                    country.Name = reader.GetString(1);
-                }
+                Country? country = db.Countries.FirstOrDefault(c => c.Code == code);
+                return country;
             }
-            catch (NpgsqlException ex)
-            {
-                Console.WriteLine($"Database exception: {ex.Message}");
-            }
-            finally
-            {
-                Instance.Connection.Close();
-            }
-            return country;
         }
         /// <summary>
         /// Insert country data into the DB
         /// </summary>
         /// <param name="country">Populated Country object</param>
-        /// <returns>Number of inserted rows</returns>
-        public int InsertCountry(Country country)
+        public void InsertCountry(Country country)
         {
-            int insertedRows = 0;
-            try
+            using (ScoreFetcherContext db = new ScoreFetcherContext())
             {
-                Instance.Connection.Open();
-                NpgsqlCommand command = new NpgsqlCommand();
-                command.CommandText = "INSERT INTO country(code, name) VALUES (@country_code, @country_name)";
-                NpgsqlParameter countryCodeParam = new NpgsqlParameter("@country_code", country.Code);
-                NpgsqlParameter countryNameParam = new NpgsqlParameter("@country_name", country.Name);
-                command.Parameters.Add(countryCodeParam);
-                command.Parameters.Add(countryNameParam);
-                insertedRows = command.ExecuteNonQuery();
-                if (insertedRows > 0) Console.WriteLine($"Inserted country {country.Code} into the DB");
+                db.Countries.Add(country);
+                db.SaveChanges();
             }
-            catch (NpgsqlException ex)
+        }
+
+        /// <summary>
+        /// Inserts data for multiple countries into the DB
+        /// </summary>
+        /// <param name="countries">IEnumerable containing populated Country objects</param>
+        public void InsertCountries(IEnumerable<Country> countries)
+        {
+            using (ScoreFetcherContext db = new ScoreFetcherContext())
             {
-                Console.WriteLine($"Database exception: {ex.Message}");
+                db.Countries.AddRange(countries);
+                db.SaveChanges();
             }
-            finally
-            {
-                Instance.Connection.Close();
-            }
-            return insertedRows;
         }
     }
 }
