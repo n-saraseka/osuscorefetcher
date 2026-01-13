@@ -28,19 +28,9 @@ namespace osuscorefetcher
                 unrankedScoreCount += unrankedScores.Length;
 
                 Task unrankedTask = service.ProcessUnrankedScoresAsync(unrankedScores);
+                Task rankedTask = service.ProcessRankedScoresAsync(rankedScores);
 
-                List<Task> rankedTasks = new List<Task>();
-                int chunkCount = Math.Min(4, rankedScores.Length);
-                int chunkSize = (int)Math.Ceiling((double)rankedScores.Length / chunkCount); ;
-
-                for (int i = 0; i < chunkCount; i++)
-                {
-                    int start = i * chunkSize;
-                    int end = (i == chunkCount - 1) ? rankedScores.Length : start + chunkSize;
-                    rankedTasks.Add(service.ProcessRankedScoresAsync(rankedScores.Skip(start).Take(end - start).ToArray()));
-                }
-
-                await Task.WhenAll(new[] { unrankedTask }.Concat(rankedTasks));
+                await Task.WhenAll(unrankedTask, rankedTask);
                 
                 cursorString = latestScores.Cursor;
                 config.Cursor = cursorString;
