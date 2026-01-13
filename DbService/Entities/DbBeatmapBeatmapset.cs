@@ -130,6 +130,11 @@ namespace osuscorefetcher.DbService.Entities
             return beatmap;
         }
 
+        /// <summary>
+        /// Insert beatmap data into the DB
+        /// </summary>
+        /// <param name="beatmap">Populated APIBeatmap object</param>
+        /// <returns>Number of inserted rows</returns>
         public int InsertBeatmap(APIBeatmap beatmap)
         {
             int insertedRows = 0;
