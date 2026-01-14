@@ -25,7 +25,7 @@ namespace osuscorefetcher.ApiClasses
         [JsonProperty("mods")]
         public APIMod[] Mods { get; set; } = Array.Empty<APIMod>();
         [JsonProperty("accuracy")]
-        public double Accuracy { get; set; }
+        public float Accuracy { get; set; }
         [JsonProperty("max_combo")]
         public int Combo { get; set; }
         [JsonProperty("statistics")]
@@ -37,6 +37,6 @@ namespace osuscorefetcher.ApiClasses
         [JsonProperty("legacy_total_score")]
         public int LegacyTotalScore { get; set; }
         [JsonProperty("pp")]
-        public double? PP { get; set; }
+        public float? PP { get; set; }
     }
 }
