@@ -14,9 +14,11 @@ namespace osuscorefetcher.ApiClasses
         [JsonProperty("beatmapset_id")]
         public int BeatmapsetId { get; set; }
         [JsonProperty("beatmapset")]
-        public Beatmapset? Beatmapset { get; set; }
+        public Beatmapset Beatmapset { get; set; }
         [JsonProperty("mode")]
         public Mode Mode { get; set; }
+        [JsonProperty("version")]
+        public string DifficultyName { get; set; }
         [JsonProperty("difficulty_rating")]
         public float Difficulty { get; set; }
         [JsonProperty("bpm")]

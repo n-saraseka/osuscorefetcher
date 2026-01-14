@@ -7,6 +7,6 @@ namespace osuscorefetcher.ApiClasses
         [JsonProperty("global_rank")]
         public int? GlobalRank { get; set; }
         [JsonProperty("pp")]
-        public int PP { get; set; } = 0;
+        public float PP { get; set; } = 0;
     }
 }
