@@ -37,7 +37,7 @@ namespace osuscorefetcher.DbService.Entities
         }
 
         /// <summary>
-        /// Inserts data for multiple countries into the DB
+        /// Insert data for multiple countries into the DB
         /// </summary>
         /// <param name="countries">IEnumerable containing populated Country objects</param>
         public void InsertCountries(IEnumerable<Country> countries)
