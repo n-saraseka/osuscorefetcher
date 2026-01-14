@@ -43,7 +43,7 @@ namespace osuscorefetcher
             tokenData.ExpiresIn += currentTime;
             Config.AccessToken = tokenData.AccessToken;
             Config.ExpiresIn = tokenData.ExpiresIn;
-            string configJSON = JsonConvert.SerializeObject(Config, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            string configJSON = JsonConvert.SerializeObject(Config);
             Config = ConfigIO.SetConfig(configJSON);
         }
         
