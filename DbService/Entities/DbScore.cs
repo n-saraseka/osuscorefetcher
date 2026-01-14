@@ -22,5 +22,31 @@ namespace osuscorefetcher.DbService.Entities
                 return score;
             }
         }
+
+        /// <summary>
+        /// Insert Score data into the DB
+        /// </summary>
+        /// <param name="score">Populated Score object</param>
+        public void InsertScore(Score score)
+        {
+            using (ScoreFetcherContext db = new ScoreFetcherContext())
+            {
+                db.Scores.Add(score);
+                db.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Insert data for multiple Scores
+        /// </summary>
+        /// <param name="scores">An IEnumerable containing populated Score objects</param>
+        public void InsertScores(IEnumerable<Score> scores)
+        {
+            using (ScoreFetcherContext db = new ScoreFetcherContext())
+            {
+                db.Scores.AddRange(scores);
+                db.SaveChanges();
+            }
+        }
     }
 }
