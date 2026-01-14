@@ -50,7 +50,7 @@ namespace osuscorefetcher.ScoreCalc
             // diffcalc
             DifficultyAttributes difficultyAttributes = ruleset.CreateDifficultyCalculator(flatWorkingBeatmap).Calculate(scoreInfo.Mods);
             PerformanceCalculator performanceCalculator = ruleset.CreatePerformanceCalculator();
-            PerformanceAttributes performanceAttributes = await performanceCalculator.CalculateAsync(scoreInfo, difficultyAttributes, default);
+            PerformanceAttributes performanceAttributes = performanceCalculator.Calculate(scoreInfo, difficultyAttributes);
 
             return (float)performanceAttributes.Total;
         }

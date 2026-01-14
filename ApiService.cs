@@ -91,7 +91,7 @@ namespace osuscorefetcher
         /// </summary>
         /// <param name="ids">List containing beatmap IDs</param>
         /// <returns>List with populated APIBeatmap objects</returns>
-        public static async Task<List<APIBeatmap>> GetBeatmapsAsync(List<int> ids)
+        public static async Task<APIBeatmap[]> GetBeatmapsAsync(List<int> ids)
         {
             await CheckIfTokenIsValidAsync();
 
@@ -111,7 +111,9 @@ namespace osuscorefetcher
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
 
-            List<APIBeatmap> beatmaps = JsonConvert.DeserializeObject<List<APIBeatmap>>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            APIBeatmap[] beatmaps = JsonConvert.DeserializeObject<Dictionary<string, APIBeatmap[]>>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })["beatmaps"];
+
+            Console.WriteLine($"Populated {ids.Count} Beatmap objects from the API");
 
             return beatmaps;
         }
@@ -122,7 +124,7 @@ namespace osuscorefetcher
         /// <param name="ids">List containing user IDs</param>
         /// <returns>List with populated User objects</returns>
         /// <exception cref="ArgumentException"></exception>
-        public static async Task<List<User>> GetUsersAsync(List<int> ids)
+        public static async Task<User[]> GetUsersAsync(List<int> ids)
         {
             await CheckIfTokenIsValidAsync();
 
@@ -142,7 +144,9 @@ namespace osuscorefetcher
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
 
-            List<User> users = JsonConvert.DeserializeObject<List<User>>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            User[] users = JsonConvert.DeserializeObject<Dictionary<string, User[]>>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })["users"];
+
+            Console.WriteLine($"Populated {ids.Count} User objects from the API");
 
             return users;
         }
