@@ -29,8 +29,16 @@ public class ScoreFetcherContext : DbContext
                 .MapEnum<Mode>("mode")
                 .MapEnum<Grade>("grade")
                 .MapEnum<BeatmapStatus>("beatmap_status"))
-            .UseSnakeCaseNamingConvention();
+            .UseSnakeCaseNamingConvention()
+            .EnableSensitiveDataLogging();
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new ScoreConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new BeatmapConfiguration());
+        modelBuilder.ApplyConfiguration(new CountryConfiguration());
+    }
 }
 
 public class ScoreConfiguration : IEntityTypeConfiguration<Score>
@@ -49,6 +57,14 @@ public class ScoreConfiguration : IEntityTypeConfiguration<Score>
                                             v => JsonConvert.SerializeObject(v),
                                             v => JsonConvert.DeserializeObject<APIMod[]>(v,
                                             new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+        builder
+            .HasOne<APIBeatmap>()
+            .WithMany()
+            .HasForeignKey(s => s.BeatmapId);
+        builder
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(s => s.UserId);
     }
 }
 
@@ -57,11 +73,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder
-            .OwnsOne(u => u.Country, country =>
-            {
-                country.ToTable("UserCountry");
-                country.WithOwner().HasForeignKey("user_id");
-            });
+            .HasOne(u => u.Country)
+            .WithMany()
+            .HasForeignKey(u => u.CountryCode);
         builder.Property(s => s.RulesetStatistics).HasConversion(
                                             v => JsonConvert.SerializeObject(v),
                                             v => JsonConvert.DeserializeObject<Dictionary<string, UserRulesetStatistics>>(v,
@@ -75,9 +89,16 @@ public class BeatmapConfiguration : IEntityTypeConfiguration<APIBeatmap>
     {
         builder
             .HasOne(b => b.Beatmapset)
-            .WithMany(bs => bs.Beatmaps)
-            .HasForeignKey(b => b.BeatmapsetId)
-            .HasPrincipalKey(bs => bs.Id);
+            .WithMany()
+            .HasForeignKey(b => b.BeatmapsetId);
+    }
+}
+
+public class CountryConfiguration : IEntityTypeConfiguration<Country>
+{
+    public void Configure(EntityTypeBuilder<Country> builder)
+    {
+        builder.HasKey(c => c.Code);
     }
 }
     
