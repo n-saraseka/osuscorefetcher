@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class Beatmapset
+    public class Beatmapset
     {
         [JsonProperty("id")]
         public int Id { get; set; }

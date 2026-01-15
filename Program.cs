@@ -17,28 +17,28 @@ namespace osuscorefetcher
 
             ScoreFetcherService service = new ScoreFetcherService();
 
-            while (true)
-            {
-                ScoresResponse latestScores = await ApiService.GetScoresAsync(cursorString, "null");
-                if (latestScores.Scores.Length == 0) break;
-                Score[] rankedScores = latestScores.Scores.Where(s => s.PP != null).ToArray();
-                Score[] unrankedScores = latestScores.Scores.Where(s => s.PP == null).ToArray();
+            ScoresResponse latestScores = await ApiService.GetScoresAsync(cursorString, "null");
+            Score[] rankedScores = latestScores.Scores.Where(s => s.PP != null).ToArray();
+            Score[] unrankedScores = latestScores.Scores.Where(s => s.PP == null).ToArray();
 
-                rankedScoreCount += rankedScores.Length;
-                unrankedScoreCount += unrankedScores.Length;
+            rankedScoreCount += rankedScores.Length;
+            unrankedScoreCount += unrankedScores.Length;
 
-                Task unrankedTask = service.ProcessUnrankedScoresAsync(unrankedScores);
-                Task rankedTask = service.ProcessRankedScoresAsync(rankedScores);
+            Task<List<APIBeatmap>> beatmapsTask = service.ProcessBeatmapsAsync(latestScores.Scores);
+            Task<List<User>> usersTask = service.ProcessUsersAsync(latestScores.Scores);
+            await Task.WhenAll(beatmapsTask, usersTask);
 
-                await Task.WhenAll(unrankedTask, rankedTask);
-                
-                cursorString = latestScores.Cursor;
-                config.Cursor = cursorString;
-                string configJSON = JsonConvert.SerializeObject(config, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
-                ConfigIO.SetConfig(configJSON);
+            Task unrankedTask = service.ProcessUnrankedScoresAsync(unrankedScores);
+            Task rankedTask = service.ProcessRankedScoresAsync(rankedScores);
 
-                await Task.Delay(1000);
-            }
+            await Task.WhenAll(unrankedTask, rankedTask);
+
+            Console.WriteLine($"Added {rankedScoreCount + unrankedScoreCount} Scores to the DB");
+
+            cursorString = latestScores.Cursor;
+            config.Cursor = cursorString;
+            string configJSON = JsonConvert.SerializeObject(config, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            ConfigIO.SetConfig(configJSON);
 
             Console.WriteLine($"Finished fetching {rankedScoreCount + unrankedScoreCount} scores");
         }

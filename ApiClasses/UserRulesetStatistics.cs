@@ -2,11 +2,11 @@
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class UserRulesetStatistics
+    public class UserRulesetStatistics
     {
         [JsonProperty("global_rank")]
         public int? GlobalRank { get; set; }
         [JsonProperty("pp")]
-        public int PP { get; set; } = 0;
+        public float PP { get; set; } = 0;
     }
 }

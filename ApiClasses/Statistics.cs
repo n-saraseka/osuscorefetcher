@@ -3,7 +3,7 @@ using osu.Game.Rulesets.Scoring;
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class Statistics
+    public class Statistics
     {
         [JsonProperty("miss")]
         [HitResult(HitResult.Miss)]

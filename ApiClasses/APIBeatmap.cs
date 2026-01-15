@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class APIBeatmap
+    public class APIBeatmap
     {
         [JsonProperty("id")]
         public int Id { get; set; }
         [JsonProperty("beatmapset_id")]
         public int BeatmapsetId { get; set; }
         [JsonProperty("beatmapset")]
-        public Beatmapset? Beatmapset { get; set; }
+        public Beatmapset Beatmapset { get; set; }
         [JsonProperty("mode")]
         public Mode Mode { get; set; }
+        [JsonProperty("version")]
+        public string DifficultyName { get; set; }
         [JsonProperty("difficulty_rating")]
         public float Difficulty { get; set; }
         [JsonProperty("bpm")]

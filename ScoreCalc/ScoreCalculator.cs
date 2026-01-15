@@ -29,7 +29,7 @@ namespace osuscorefetcher.ScoreCalc
         /// </summary>
         /// <param name="score">Score data from the API</param>
         /// <returns>Score's PP</returns>
-        public async Task<double?> CalculateScorePPAsync(ApiClasses.Score score)
+        public async Task<float?> CalculateScorePPAsync(ApiClasses.Score score)
         {
             // preparing necessary data
             Ruleset ruleset = GetRulesetFromScore(score);
@@ -50,9 +50,9 @@ namespace osuscorefetcher.ScoreCalc
             // diffcalc
             DifficultyAttributes difficultyAttributes = ruleset.CreateDifficultyCalculator(flatWorkingBeatmap).Calculate(scoreInfo.Mods);
             PerformanceCalculator performanceCalculator = ruleset.CreatePerformanceCalculator();
-            PerformanceAttributes performanceAttributes = await performanceCalculator.CalculateAsync(scoreInfo, difficultyAttributes, default);
+            PerformanceAttributes performanceAttributes = performanceCalculator.Calculate(scoreInfo, difficultyAttributes);
 
-            return performanceAttributes.Total;
+            return (float)performanceAttributes.Total;
         }
         /// <summary>
         /// Prepare ScoreInfo object for use in calculating difficulty and performance attributes

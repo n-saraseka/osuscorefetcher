@@ -43,7 +43,7 @@ namespace osuscorefetcher
             tokenData.ExpiresIn += currentTime;
             Config.AccessToken = tokenData.AccessToken;
             Config.ExpiresIn = tokenData.ExpiresIn;
-            string configJSON = JsonConvert.SerializeObject(Config, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            string configJSON = JsonConvert.SerializeObject(Config);
             Config = ConfigIO.SetConfig(configJSON);
         }
         
@@ -70,7 +70,7 @@ namespace osuscorefetcher
 
             string queryString = string.Join("&", queryParameters.Select(x => $"{Uri.EscapeDataString(x.Key)}={Uri.EscapeDataString(x.Value)}"));
 
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, ApiUrl + "/scores?" + queryString);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{ApiUrl}/scores?{queryString}");
 
             // assemble headers
             requestMessage.Headers.Add("Authorization", "Bearer " + Config.AccessToken);
@@ -85,53 +85,70 @@ namespace osuscorefetcher
 
             return scores;
         }
+
         /// <summary>
-        /// Get API Beatmap data from its ID
+        /// Get API Beatmap data from their IDs
         /// </summary>
-        /// <param name="id">Beatmap ID</param>
-        /// <returns>Populated APIBeatmap object</returns>
-        public static async Task<APIBeatmap> GetBeatmapAsync(uint id = 75)
+        /// <param name="ids">List containing beatmap IDs</param>
+        /// <returns>List with populated APIBeatmap objects</returns>
+        public static async Task<APIBeatmap[]> GetBeatmapsAsync(List<int> ids)
         {
             await CheckIfTokenIsValidAsync();
 
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, ApiUrl + "/beatmaps/" + id.ToString());
+            int count = ids.Count;
+            if (count == 0) throw new ArgumentException("No beatmap IDs to process");
+            if (count > 50) throw new ArgumentException("ID limit per call reached (more than 50)");
+
+            string queryString = string.Join("&", ids.Select(b => $"ids[]={b}"));
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{ApiUrl}/beatmaps?{queryString}");
 
             // assemble headers
             requestMessage.Headers.Add("Authorization", "Bearer " + Config.AccessToken);
             requestMessage.Headers.Add("x-api-version", ApiVersion.ToString());
 
-            // getting beatmap
+            // parse beatmaps
             HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
 
-            APIBeatmap beatmap = JsonConvert.DeserializeObject<APIBeatmap>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            APIBeatmap[] beatmaps = JsonConvert.DeserializeObject<Dictionary<string, APIBeatmap[]>>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })["beatmaps"];
 
-            return beatmap;
+            Console.WriteLine($"Populated {ids.Count} Beatmap objects from the API");
+
+            return beatmaps;
         }
+
         /// <summary>
-        /// Get API Beatmapset data from its ID
+        /// Get API User data from their IDs
         /// </summary>
-        /// <param name="id">Beatmapset ID</param>
-        /// <returns>Populated Beatmapset object</returns>
-        public static async Task<Beatmapset> GetBeatmapsetAsync(uint id = 1)
+        /// <param name="ids">List containing user IDs</param>
+        /// <returns>List with populated User objects</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static async Task<User[]> GetUsersAsync(List<int> ids)
         {
             await CheckIfTokenIsValidAsync();
 
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, ApiUrl + "/beatmapsets/" + id.ToString());
+            int count = ids.Count;
+            if (count == 0) throw new ArgumentException("No user IDs to process");
+            if (count > 50) throw new ArgumentException("ID limit per call reached (more than 50)");
+
+            string queryString = string.Join("&", ids.Select(u => $"ids[]={u}"));
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{ApiUrl}/users?{queryString}");
 
             // assemble headers
             requestMessage.Headers.Add("Authorization", "Bearer " + Config.AccessToken);
             requestMessage.Headers.Add("x-api-version", ApiVersion.ToString());
 
-            // getting beatmap
+            // parse beatmaps
             HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
 
-            Beatmapset beatmapset = JsonConvert.DeserializeObject<Beatmapset>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            User[] users = JsonConvert.DeserializeObject<Dictionary<string, User[]>>(content, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })["users"];
 
-            return beatmapset;
+            Console.WriteLine($"Populated {ids.Count} User objects from the API");
+
+            return users;
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 
 namespace osuscorefetcher.ApiClasses
 {
-    internal class HitResultAttribute : Attribute
+    public class HitResultAttribute : Attribute
     {
         public HitResult HitResult { get; }
         
